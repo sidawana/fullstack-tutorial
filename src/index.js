@@ -1,70 +1,67 @@
-import React from'react';
+import React,{useState} from'react';
 import ReactDOM from 'react-dom';
 
 const Header = (props) => {
-    console.log(props)
+    // console.log(props)
     return (
         <div>
-        <h1>{props.course}</h1>
+        <h1>{props.text}</h1>
         </div>)
 }
 
-const Part = (props)=>{
-    console.log(props)
-    return (
-        <p>
-        {props.name} {props.exercises}
-      </p>
-    )
+const Button = (props) => (
+    <button onClick={props.handleClick}>
+      {props.text}
+    </button>
+  )
+
+const Stats = (props)=><tr><td>{props.text}</td><td>{props.value}</td></tr>
+
+const Statistics = ({good,neutral,bad})=> {
+  let all = good+bad+neutral
+  let goodPercent = (all===0)?0:(good/(all))
+  if (all) {
+  return(
+  <table>
+    <tbody>
+      <Stats text="neutral" value = {neutral} />
+      <Stats text="bad" value = {bad} />
+      <Stats text ="all" value = {all} />
+      <Stats text = "average" value = {good+bad*-1} />
+      <Stats text = "positive" value = {goodPercent+'  %'} />
+    </tbody>
+  </table>
+  )
+  }
+  return(
+    <div>No feedback given</div>
+  )
 }
 
-const Content = (props) => {
-    const prop = props.parts
-    console.log(prop[0].name)
-    console.log('before here')
-    return (
-  <div>
-      <Part name={prop[0].name} exercises = {prop[0].exercises} />
-      <Part name={prop[1].name} exercises = {prop[1].exercises} />
-      <Part name={prop[2].name} exercises = {prop[2].exercises} />   
-  </div>
-)}
 
-const Total = (props) =>{
-    const prop= props.parts
-    console.log(prop)
-    return(
-        <>
-         <p>Number of exercises   {prop[0].exercises + prop[1].exercises + prop[2].exercises} 
-        </p>
-        </>
-    )
-}
+
+
 
 const App = () => {
-    const course = {
-        name: 'Half Stack application development',
-        parts: [
-          {
-            name: 'Fundamentals of React',
-            exercises: 10
-          },
-          {
-            name: 'Using props to pass data',
-            exercises: 7
-          },
-          {
-            name: 'State of a component',
-            exercises: 14
-          }
-        ]
-      }
-    
+  
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+  
+  const setToGood = () => setGood(good+1)
+  
+  const setTobad = () => setBad(bad+1)
+  const setToneutral = () => setNeutral(neutral+1)
+  
+
     return (
         <div>
-            <Header course = {course.name} />
-            <Content parts = {course.parts} />
-            <Total parts = {course.parts} />
+            <Header text = {'Give feedback'} />
+            <Button text="good"  handleClick = {setToGood} />
+            <Button text="neutral" handleClick = {()=>setToneutral()} />
+            <Button text="bad" handleClick = {()=>setTobad()} />
+            <Header text = "Statistics" />
+            <Statistics  good = {good} bad={bad} neutral ={neutral} />
         </div>
     )
 }
